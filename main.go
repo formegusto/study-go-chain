@@ -10,5 +10,8 @@ func main() {
 	// fmt.Println(plus(2, 3))
 	// fmt.Println(go_basic.Sum(1,2,3,4,5,6,7,8,9,10))
 	// go_basic.ShowLetter("N th ! ! ! ! Hello ! ! ! ! ~ ! ! ! ! ! !")
-	go_basic.Fmt()
+	// go_basic.Fmt()
+	// go_basic.Arrays()
+	// go_basic.Pointers()
+	go_basic.PointersAndStructs()
 }
