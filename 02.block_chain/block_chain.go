@@ -11,7 +11,7 @@ type block struct {
 	prevHash 	string 
 }
 
-func Test_1() {
+func Test1() {
 	genesisBlock := block{"Genesis Block", "", ""}
 
 	// byte slice vs string
@@ -35,5 +35,55 @@ func Test_1() {
 	/*
 	89eb0ac031a63d2421cd05a2fbe41f3ea35f5c3712ca839cbf6b85c4ee07b7a3
 	*/
+}
+
+type blockchain struct {
+	blocks []block
+}
+
+func (b *blockchain) getLastHash() string {
+	if len(b.blocks) > 0 {
+		return b.blocks[len(b.blocks) - 1].hash
+	}
+	return ""
+}
+
+func (b *blockchain) addBlock(data string) {
+	newBlock := block{data, "", ""}
+
+	// 1. previous Hash parse
+	newBlock.prevHash = b.getLastHash()
+
+	// 2. set hash = hash(data + prevHash)
+	hash := sha256.Sum256([]byte(newBlock.data + newBlock.prevHash))
+	newBlock.hash = fmt.Sprintf("%x", hash)
+
+	// 3. adding block in chain
+	b.blocks = append(b.blocks, newBlock)
+}
+
+func (b *blockchain) listBlocks() {
+	for _, block := range b.blocks {
+		fmt.Printf("Data: %s\n",block.data)
+		fmt.Printf("Hash: %s\n",block.hash)
+		fmt.Printf("Prev Hash: %s\n\n",block.prevHash)
+	}
+}
+
+func Test2() {
+	chain := blockchain{}
+	chain.addBlock("Genesis Block")
+	chain.addBlock("Second Block")
+	chain.addBlock("Third Block")
+	chain.listBlocks()
+
+	// genesisBlock := block{"Genesis Block", "", ""}
+	// hash := sha256.Sum256([]byte(genesisBlock.data + genesisBlock.prevHash))
+	// hexHash := fmt.Sprintf("%x", hash)
+	// genesisBlock.hash = hexHash
+
+	// // 이전 블록의 hash 값으로 이루어진 연결고리가 바로 블록체인
+	// secodeBlocks := block{"Second Block", "", genesisBlock.hash}
+
 }
 
