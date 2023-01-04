@@ -1,12 +1,14 @@
 {{define "add"}}
 <!DOCTYPE html>
 <html lang="en">
-  {{template "head"}}
+  {{template "head" "Add"}}
   <body>
-    {{template "header"}}
+    {{template "header" "Add"}}
     <main>
-      <form>
-        <input type="text" placeholder="Data for u'r block" required />
+      <!-- action="/add"는 default로 박힐 것 이기 때문에 안 적어줘도 된다. -->
+      <form method="POST">
+        <input type="text" placeholder="Data for u'r block" required name="blockData"/>
+        <button>Add Block</button>
       </form>
     </main>
     {{template "footer"}}

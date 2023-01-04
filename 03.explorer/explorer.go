@@ -42,6 +42,22 @@ func home(rw http.ResponseWriter, r *http.Request) {
 	templates.ExecuteTemplate(rw, "home",data)
 }
 
+func add(rw http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+		case "GET":
+			templates.ExecuteTemplate(rw, "add", nil)
+		case "POST":
+			// r.Form이 생성됨
+			r.ParseForm()
+
+			// block을 chain에 추가
+			data := r.Form.Get("blockData")
+			blockchain.GetBlockchain().AddBlock(data)
+
+			http.Redirect(rw, r, "/", http.StatusPermanentRedirect)
+	}
+}
+
 func Open() {
 	// template preload
 	templates = template.Must(template.ParseGlob(templateDir + "pages/*.gohtml"))
@@ -50,6 +66,7 @@ func Open() {
 
 	// routes
 	http.HandleFunc("/", home)
+	http.HandleFunc("/add", add)
 
 	fmt.Printf("Listening on http://localhost%s\n", port)
 
