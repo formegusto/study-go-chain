@@ -9,7 +9,11 @@ import (
 	"github.com/formegusto/study-go-chain/02.block_chain/blockchain"
 )
 
-const port string = ":4000"
+const (
+	port string = ":4000"
+	templateDir string = "templates/"
+)
+var templates *template.Template
 
 type homeData struct {
 	// template에서 공우되는 것 마저,, 대문자로 공유해준다!
@@ -26,7 +30,7 @@ func home(rw http.ResponseWriter, r *http.Request) {
 	
 	// * templates
 	// tmpl := template.Must(template.ParseFiles("templates/pages/home.gohtml"))
-	tmpl := template.Must(template.ParseGlob("templates/pages/home.gohtml"))
+
 	// if err != nil {
 	// 	log.Fatal(err)
 	// }
@@ -35,10 +39,15 @@ func home(rw http.ResponseWriter, r *http.Request) {
 	// Writer, data 를 요구한다.
 	// Template 에서 받고자 하는 데이터를 정의해준다.
 	data := homeData{"Home", blockchain.GetBlockchain().AllBlocks()}
-	tmpl.Execute(rw, data)
+	templates.ExecuteTemplate(rw, "home",data)
 }
 
 func Open() {
+	// template preload
+	templates = template.Must(template.ParseGlob(templateDir + "pages/*.gohtml"))
+	// templates 를 쓰는 것이 중요하다. 빈 곳에 저장 후 추가 저장한다는 느낌임
+	templates = template.Must(templates.ParseGlob(templateDir + "partials/*.gohtml"))
+
 	// routes
 	http.HandleFunc("/", home)
 
