@@ -1,7 +1,7 @@
 package main
 
-import block_chain_test "github.com/formegusto/study-go-chain/02.block_chain"
+import explorer_test "github.com/formegusto/study-go-chain/03.explorer"
 
 func main() {
-	block_chain_test.Test()
+	explorer_test.Open()
 }
