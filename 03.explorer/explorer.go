@@ -25,7 +25,8 @@ func home(rw http.ResponseWriter, r *http.Request) {
 	// fmt.Fprint(rw, "Hello from home!")
 	
 	// * templates
-	tmpl := template.Must(template.ParseFiles("templates/home.html"))
+	// tmpl := template.Must(template.ParseFiles("templates/pages/home.gohtml"))
+	tmpl := template.Must(template.ParseGlob("templates/pages/home.gohtml"))
 	// if err != nil {
 	// 	log.Fatal(err)
 	// }
