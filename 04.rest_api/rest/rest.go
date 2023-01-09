@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/formegusto/study-go-chain/02.block_chain/blockchain"
 	"github.com/formegusto/study-go-chain/utils"
@@ -53,7 +54,7 @@ func documentation(rw http.ResponseWriter, r *http.Request) {
 			AdminMsg: 		"This is hide field",
 		},
 		{
-			URL: 			url("/blocks/{}"),
+			URL: 			url("/blocks/{height}"),
 			Method: 		"GET",
 			Description: 	"See A Block",
 		},
@@ -81,9 +82,16 @@ func block(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	
 	// 2. get path parmeter
-	id := vars["id"]
+	height := vars["height"]
 
-	fmt.Println(id)
+	// 3. conversion
+	_height, err := strconv.Atoi(height)
+	utils.HandleErr(err)
+
+	// 4. get block
+	block := blockchain.GetBlockchain().GetBlock(_height)
+
+	json.NewEncoder(rw).Encode(block)
 }
 
 func Start(aPort int) {
@@ -93,7 +101,7 @@ func Start(aPort int) {
 
 	router.HandleFunc("/", documentation).Methods("GET")
 	router.HandleFunc("/blocks", blocks).Methods("GET", "POST")
-	router.HandleFunc("/blocks/{id:[0-9]+}", block).Methods("GET")
+	router.HandleFunc("/blocks/{height:[0-9]+}", block).Methods("GET")
 
 	fmt.Printf("Listening on http://localhost:%s\n", port)
 	log.Fatal(http.ListenAndServe(port, router))

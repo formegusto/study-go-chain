@@ -60,4 +60,10 @@ func (b blockchain) AllBlocks() []*Block {
 	return b.blocks
 }
 
+func (b *blockchain) GetBlock(height int) *Block{
+	// height는 1부터
+	// array는 0부터
+	return b.blocks[height - 1]
+}
+
 
