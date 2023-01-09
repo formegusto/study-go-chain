@@ -77,5 +77,5 @@ import "github.com/formegusto/study-go-chain/03.explorer/explorer"
 // }
 
 func Open() {
-	explorer.Start()
+	explorer.Start(3000)
 }

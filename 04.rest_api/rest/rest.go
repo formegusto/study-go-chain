@@ -76,11 +76,13 @@ func blocks(rw http.ResponseWriter, r *http.Request) {
 }
 
 func Start(aPort int) {
+	handler := http.NewServeMux()
+
 	port = fmt.Sprintf(":%d", aPort)
 
-	http.HandleFunc("/", documentation)
-	http.HandleFunc("/blocks", blocks)
+	handler.HandleFunc("/", documentation)
+	handler.HandleFunc("/blocks", blocks)
 
 	fmt.Printf("Listening on http://localhost:%s\n", port)
-	log.Fatal(http.ListenAndServe(port, nil))
+	log.Fatal(http.ListenAndServe(port, handler))
 }
