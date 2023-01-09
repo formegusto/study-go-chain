@@ -1,12 +1,12 @@
-package rest
+package rest_test
 
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/formegusto/study-go-chain/02.block_chain/blockchain"
+	"github.com/formegusto/study-go-chain/04.rest_api/rest"
 	"github.com/formegusto/study-go-chain/utils"
 )
 
@@ -90,11 +90,12 @@ func Open() {
 	// 	AdminMsg: 		"This is hide field",
 	// })
 	// // "Hello I'm the URL Description"
-	http.HandleFunc("/", documentation)
-	http.HandleFunc("/blocks", blocks)
+	// http.HandleFunc("/", documentation)
+	// http.HandleFunc("/blocks", blocks)
 
-	fmt.Printf("Listening on http://localhost:%s\n", port)
-	log.Fatal(http.ListenAndServe(port, nil))
+	// fmt.Printf("Listening on http://localhost:%s\n", port)
+	// log.Fatal(http.ListenAndServe(port, nil))
+	rest.Start(4000)
 }
 
 // Documentation Example
