@@ -5,16 +5,16 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-
-	"github.com/formegusto/study-go-chain/utils"
 )
 
 const port string = ":4000"
 
 type URLDescription struct {
-	URL 		string
-	Method 		string
-	Description string 
+	URL 		string `json:"url"`
+	Method 		string `json:"method"`
+	Description string `json:"description"`
+	Payload		string `json:"payload,omitempty"`
+	AdminMsg	string `json:"-"`
 }
 
 func documentation(rw http.ResponseWriter, r *http.Request) {
@@ -23,22 +23,35 @@ func documentation(rw http.ResponseWriter, r *http.Request) {
 			URL: 			"/",
 			Method: 		"GET",
 			Description: 	"See Documentation",
+			AdminMsg: 		"This is hide field",
+		},
+		{
+			URL: 			"/blocks",
+			Method: 		"POST",
+			Description: 	"Add A Block",
+			Payload: 		"data:string",
+			AdminMsg: 		"This is hide field",
 		},
 	}
-	b, err := json.Marshal(data)
-	utils.HandleErr(err)
+	// 1. hard
+	// b, err := json.Marshal(data)
+	// utils.HandleErr(err)
 
-	// fmt.Printf("%s",b)
-	// [{"URL":"/","Method":"GET","Description":"See Documentation"}
-	// 원래는 그냥 문자열이라는 거!
+	// // fmt.Printf("%s",b)
+	// // [{"URL":"/","Method":"GET","Description":"See Documentation"}
+	// // 원래는 그냥 문자열이라는 거!
+	// rw.Header().Add("Content-Type", "appliation/json")
+	// fmt.Fprintf(rw, "%s", b)
+
+	// 2. simple
 	rw.Header().Add("Content-Type", "appliation/json")
-	fmt.Fprintf(rw, "%s", b)
+	json.NewEncoder(rw).Encode(data)
 }
 
 func Open() {
 	http.HandleFunc("/", documentation)
 
-	fmt.Printf("Listening on http://localhost:%s", port)
+	fmt.Printf("Listening on http://localhost:%s\n", port)
 	log.Fatal(http.ListenAndServe(port, nil))
 }
 
