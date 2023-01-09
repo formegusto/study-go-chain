@@ -63,14 +63,12 @@ func documentation(rw http.ResponseWriter, r *http.Request) {
 			Description: 	"See A Block",
 		},
 	}
-	rw.Header().Add("Content-Type", "appliation/json")
 	json.NewEncoder(rw).Encode(data)
 }
 
 func blocks(rw http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 		case "GET":
-			rw.Header().Add("Content-Type", "application/json")
 			json.NewEncoder(rw).Encode(blockchain.GetBlockchain().AllBlocks())
 		case "POST":
 			var addBlockBody addBlockBody
@@ -103,11 +101,34 @@ func block(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func jsonContentTypeMiddleware(next http.Handler) http.Handler {
+	// 이게 adapter 패턴이다.
+	// 이와 같이 http HandleFunc는 타입이다.
+	// 함수가 호출되면 무언가를 반환하거나 실행하는 것 이 아니다. http HandleFunc 라는 타입이 반환되는 것 이다.
+
+	// Handler는 interface이다.
+
+	// 여기서 추가적으로 http.Handler가 요구하는 serveHTTP가 구현된 객체가 반환된다는 것 이다.
+	// 이게 adapter 패턴이다. 
+	/**
+	func (f HandlerFunc) ServeHTTP(w ResponseWriter, r *Request) {
+		f(w, r)
+	}
+	**/
+	// 추가적으로 보면 serveHTTP가 receiver로 구현되어 있다.
+	// 우리가 URL에 marshal text를 사용하기 위해서 URL type을 구성하고 String receiver를 만든 것 처럼
+	return http.HandlerFunc(func (rw http.ResponseWriter, r *http.Request) {
+		rw.Header().Add("Content-Type", "application/json")
+		next.ServeHTTP(rw, r)
+	})
+}
+
 func Start(aPort int) {
 	router := mux.NewRouter()
 
 	port = fmt.Sprintf(":%d", aPort)
 
+	router.Use(jsonContentTypeMiddleware)
 	router.HandleFunc("/", documentation).Methods("GET")
 	router.HandleFunc("/blocks", blocks).Methods("GET", "POST")
 	router.HandleFunc("/blocks/{height:[0-9]+}", block).Methods("GET")
