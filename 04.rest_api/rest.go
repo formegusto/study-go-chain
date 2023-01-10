@@ -82,7 +82,7 @@ func blocks(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func Open() {
+func Open(aPort int) {
 	// fmt.Println(URLDescription{
 	// 	URL: 			"/",
 	// 	Method: 		"GET",
@@ -95,7 +95,7 @@ func Open() {
 
 	// fmt.Printf("Listening on http://localhost:%s\n", port)
 	// log.Fatal(http.ListenAndServe(port, nil))
-	rest.Start(4000)
+	rest.Start(aPort)
 }
 
 // Documentation Example

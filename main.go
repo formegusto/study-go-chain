@@ -1,9 +1,7 @@
 package main
 
-import (
-	rest_test "github.com/formegusto/study-go-chain/04.rest_api"
-)
+import my_cli "github.com/formegusto/study-go-chain/05.my_cli"
 
 func main() {
-	rest_test.Open()
+	my_cli.Test()
 }
