@@ -3,5 +3,5 @@ package main
 import my_cli "github.com/formegusto/study-go-chain/05.my_cli"
 
 func main() {
-	my_cli.Test()
+	my_cli.Start()
 }

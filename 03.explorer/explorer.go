@@ -76,6 +76,6 @@ import "github.com/formegusto/study-go-chain/03.explorer/explorer"
 // 	log.Fatal(http.ListenAndServe(port, nil))
 // }
 
-func Open() {
-	explorer.Start(3000)
+func Open(aPort int) {
+	explorer.Start(aPort)
 }
