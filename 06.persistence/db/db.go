@@ -38,3 +38,31 @@ func DB() *bolt.DB{
 	}
 	return db
 }
+
+// key : DB 에서 block 회수 -> hash
+// value : byte 형태의 data, block 전체를 byte 형태로 변환
+// boltdb byte 형태의 data만 받는다.
+func SaveBlock(hash string, data []byte) {
+	err := DB().Update(func(tx *bolt.Tx) error {
+		// bucket에 저장작업
+		// 1. bucket read
+		bucket := tx.Bucket([]byte(blocksBucket))
+		err := bucket.Put([]byte(hash), data)
+
+		return err
+	})
+	utils.HandleErr(err)
+}
+
+func SaveBlockchain(data []byte) {
+	err := DB().Update(func(tx *bolt.Tx) error {
+		// 1. bucket read
+		bucket := tx.Bucket([]byte(dataBucket))
+
+		// 2. newestHash 와 height 정보가 들어갈 거라!
+		err := bucket.Put([]byte("checkpoint"), data)
+
+		return err
+	})
+	utils.HandleErr(err)
+}
