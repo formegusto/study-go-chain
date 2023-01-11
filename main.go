@@ -1,7 +1,7 @@
 package main
 
-import my_cli "github.com/formegusto/study-go-chain/05.my_cli"
+import persistence_test "github.com/formegusto/study-go-chain/06.persistence"
 
 func main() {
-	my_cli.Start()
+	persistence_test.Test()	
 }
