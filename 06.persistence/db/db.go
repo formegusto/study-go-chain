@@ -2,6 +2,8 @@
 package db
 
 import (
+	"fmt"
+
 	"github.com/boltdb/bolt"
 	"github.com/formegusto/study-go-chain/utils"
 )
@@ -43,6 +45,7 @@ func DB() *bolt.DB{
 // value : byte 형태의 data, block 전체를 byte 형태로 변환
 // boltdb byte 형태의 data만 받는다.
 func SaveBlock(hash string, data []byte) {
+	fmt.Printf("Saving Block %s\nData: %b\n", hash, data)
 	err := DB().Update(func(tx *bolt.Tx) error {
 		// bucket에 저장작업
 		// 1. bucket read
