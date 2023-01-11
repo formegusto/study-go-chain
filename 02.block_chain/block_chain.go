@@ -1,11 +1,5 @@
 package block_chain_test
 
-import (
-	"fmt"
-
-	"github.com/formegusto/study-go-chain/02.block_chain/blockchain"
-)
-
 // type block struct {
 // 	data 		string
 // 	hash 		string
@@ -89,15 +83,15 @@ import (
 // }
 
 func Test() {
-	chain := blockchain.GetBlockchain()
+	// chain := blockchain.GetBlockchain()
 
-	chain.AddBlock("Second Block")
-	chain.AddBlock("Third Block")
-	chain.AddBlock("Fourth Block")
+	// chain.AddBlock("Second Block")
+	// chain.AddBlock("Third Block")
+	// chain.AddBlock("Fourth Block")
 
-	for _, block := range chain.AllBlocks() {
-		fmt.Printf("Data: %s\n", block.Data)
-		fmt.Printf("Hash: %s\n", block.Hash)
-		fmt.Printf("Prev Hash: %s\n\n", block.PrevHash)
-	}
+	// for _, block := range chain.AllBlocks() {
+	// 	fmt.Printf("Data: %s\n", block.Data)
+	// 	fmt.Printf("Hash: %s\n", block.Hash)
+	// 	fmt.Printf("Prev Hash: %s\n\n", block.PrevHash)
+	// }
 }
