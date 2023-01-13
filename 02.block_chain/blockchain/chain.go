@@ -1,6 +1,9 @@
 package blockchain
 
 import (
+	"bytes"
+	"encoding/gob"
+	"fmt"
 	"sync"
 
 	"github.com/formegusto/study-go-chain/06.persistence/db"
@@ -15,6 +18,12 @@ type blockchain struct {
 
 var b *blockchain
 var once sync.Once
+
+func (b *blockchain) restore(data []byte) {
+	fmt.Println("Restoring...")
+	decoder := gob.NewDecoder(bytes.NewReader(data))
+	decoder.Decode(b)
+}
 
 func (b* blockchain) persist() {
 	db.SaveBlockchain(utils.ToBytes(b))
@@ -37,8 +46,21 @@ func Blockchain() *blockchain {
 	if b == nil {
 		once.Do(func() {
 			b = &blockchain{"", 0}
-			b.AddBlock("Genesis Block")
+			fmt.Printf("NewestHash: %s\nHeight: %d\n\n", b.NewestHash, b.Height)
+
+			// search for checkpoint on the db
+			checkpoint := db.Checkpoint()
+			if checkpoint == nil {
+				b.AddBlock("Genesis Block")
+			} else {
+				// restore b from bytes
+				b.restore(checkpoint)
+			}
+
+			
 		})
 	}
+
+	fmt.Printf("NewestHash: %s\nHeight: %d\n", b.NewestHash, b.Height)
 	return b
 }

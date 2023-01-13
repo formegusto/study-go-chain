@@ -2,8 +2,6 @@
 package db
 
 import (
-	"fmt"
-
 	"github.com/boltdb/bolt"
 	"github.com/formegusto/study-go-chain/utils"
 )
@@ -12,6 +10,8 @@ const (
 	dbName = "blockchain.db"
 	dataBucket = "data"
 	blocksBucket = "blocks"
+
+	checkpoint = "checkpoint"
 )
 var db *bolt.DB
 
@@ -45,7 +45,7 @@ func DB() *bolt.DB{
 // value : byte 형태의 data, block 전체를 byte 형태로 변환
 // boltdb byte 형태의 data만 받는다.
 func SaveBlock(hash string, data []byte) {
-	fmt.Printf("Saving Block %s\nData: %b\n", hash, data)
+	// fmt.Printf("Saving Block %s\nData: %b\n", hash, data)
 	err := DB().Update(func(tx *bolt.Tx) error {
 		// bucket에 저장작업
 		// 1. bucket read
@@ -63,9 +63,22 @@ func SaveBlockchain(data []byte) {
 		bucket := tx.Bucket([]byte(dataBucket))
 
 		// 2. newestHash 와 height 정보가 들어갈 거라!
-		err := bucket.Put([]byte("checkpoint"), data)
+		err := bucket.Put([]byte(checkpoint), data)
 
 		return err
 	})
 	utils.HandleErr(err)
+}
+
+func Checkpoint()[]byte {
+	var data []byte
+	// only read transaction
+	DB().View(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket([]byte(dataBucket))
+		data = bucket.Get([]byte(checkpoint))
+
+		return nil
+	})
+
+	return data
 }
