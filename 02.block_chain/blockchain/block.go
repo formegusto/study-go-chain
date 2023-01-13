@@ -1,9 +1,7 @@
 package blockchain
 
 import (
-	"bytes"
 	"crypto/sha256"
-	"encoding/gob"
 	"fmt"
 
 	"github.com/formegusto/study-go-chain/06.persistence/db"
@@ -17,22 +15,22 @@ type Block struct {
 	Height		int		`json:"height"`
 }
 
-func (b *Block) toBytes() []byte {
-	// 1. create buffer
-	var blockBuffer bytes.Buffer
+// func (b *Block) toBytes() []byte {
+// 	// 1. create buffer
+// 	var blockBuffer bytes.Buffer
 
-	// 2. create Encoder
-	encoder := gob.NewEncoder(&blockBuffer)
+// 	// 2. create Encoder
+// 	encoder := gob.NewEncoder(&blockBuffer)
 
-	// 3. run encode
-	err := encoder.Encode(b)
-	utils.HandleErr(err)
+// 	// 3. run encode
+// 	err := encoder.Encode(b)
+// 	utils.HandleErr(err)
 
-	return blockBuffer.Bytes()
-}
+// 	return blockBuffer.Bytes()
+// }
 
 func (b *Block) persist() {
-	db.SaveBlock(b.Hash, b.toBytes())
+	db.SaveBlock(b.Hash, utils.ToBytes(b))
 }
 
 func createBlock(data string, prevHash string, height int) *Block {
