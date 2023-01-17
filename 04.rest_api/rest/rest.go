@@ -5,10 +5,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/formegusto/study-go-chain/02.block_chain/blockchain"
-	"github.com/formegusto/study-go-chain/utils"
 	"github.com/gorilla/mux"
 )
 
@@ -58,7 +56,7 @@ func documentation(rw http.ResponseWriter, r *http.Request) {
 			AdminMsg: 		"This is hide field",
 		},
 		{
-			URL: 			url("/blocks/{height}"),
+			URL: 			url("/blocks/{hash}"),
 			Method: 		"GET",
 			Description: 	"See A Block",
 		},
@@ -69,13 +67,15 @@ func documentation(rw http.ResponseWriter, r *http.Request) {
 func blocks(rw http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 		case "GET":
-			json.NewEncoder(rw).Encode(blockchain.GetBlockchain().AllBlocks())
+			return 
+			// json.NewEncoder(rw).Encode(blockchain.GetBlockchain().AllBlocks())
 		case "POST":
-			var addBlockBody addBlockBody
-			err := json.NewDecoder(r.Body).Decode(&addBlockBody)
-			utils.HandleErr(err)
-			blockchain.GetBlockchain().AddBlock(addBlockBody.Message)
-			rw.WriteHeader(http.StatusCreated)
+			return
+			// var addBlockBody addBlockBody
+			// err := json.NewDecoder(r.Body).Decode(&addBlockBody)
+			// utils.HandleErr(err)
+			// blockchain.GetBlockchain().AddBlock(addBlockBody.Message)
+			// rw.WriteHeader(http.StatusCreated)
 	}
 }
 
@@ -84,14 +84,14 @@ func block(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	
 	// 2. get path parmeter
-	height := vars["height"]
+	hash := vars["hash"]
 
 	// 3. conversion
-	_height, err := strconv.Atoi(height)
-	utils.HandleErr(err)
+	// _height, err := strconv.Atoi(height)
+	// utils.HandleErr(err)
 
 	// 4. get block
-	block, err := blockchain.GetBlockchain().GetBlock(_height)
+	block, err := blockchain.FindBlock(hash)
 	encoder := json.NewEncoder(rw)
 	if err == blockchain.ErrNotFound {
 		rw.WriteHeader(http.StatusNotFound)
@@ -131,7 +131,7 @@ func Start(aPort int) {
 	router.Use(jsonContentTypeMiddleware)
 	router.HandleFunc("/", documentation).Methods("GET")
 	router.HandleFunc("/blocks", blocks).Methods("GET", "POST")
-	router.HandleFunc("/blocks/{height:[0-9]+}", block).Methods("GET")
+	router.HandleFunc("/blocks/{hash:[a-f0-9]+}", block).Methods("GET")
 
 	fmt.Printf("Listening on http://localhost%s\n", port)
 	log.Fatal(http.ListenAndServe(port, router))

@@ -1,8 +1,6 @@
 package blockchain
 
 import (
-	"bytes"
-	"encoding/gob"
 	"fmt"
 	"sync"
 
@@ -20,9 +18,8 @@ var b *blockchain
 var once sync.Once
 
 func (b *blockchain) restore(data []byte) {
-	fmt.Println("Restoring...")
-	decoder := gob.NewDecoder(bytes.NewReader(data))
-	decoder.Decode(b)
+	fmt.Println("Chain Restoring...")
+	utils.FromBytes(b, data)
 }
 
 func (b* blockchain) persist() {
@@ -56,8 +53,6 @@ func Blockchain() *blockchain {
 				// restore b from bytes
 				b.restore(checkpoint)
 			}
-
-			
 		})
 	}
 

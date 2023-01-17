@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/formegusto/study-go-chain/02.block_chain/blockchain"
 	"github.com/formegusto/study-go-chain/04.rest_api/rest"
-	"github.com/formegusto/study-go-chain/utils"
 )
 
 const port string = ":4000"
@@ -66,21 +64,21 @@ func documentation(rw http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(rw).Encode(data)
 }
 
-func blocks(rw http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-		case "GET":
-			rw.Header().Add("Content-Type", "application/json")
-			json.NewEncoder(rw).Encode(blockchain.GetBlockchain().AllBlocks())
-		case "POST":
-			var addBlockBody AddBlockBody
-			// Pointer를 보내주어야 함
-			err := json.NewDecoder(r.Body).Decode(&addBlockBody)
-			utils.HandleErr(err)
-			// fmt.Println(addBlockBody)
-			blockchain.GetBlockchain().AddBlock(addBlockBody.Message)
-			rw.WriteHeader(http.StatusCreated)
-	}
-}
+// func blocks(rw http.ResponseWriter, r *http.Request) {
+// 	switch r.Method {
+// 		case "GET":
+// 			rw.Header().Add("Content-Type", "application/json")
+// 			json.NewEncoder(rw).Encode(blockchain.GetBlockchain().AllBlocks())
+// 		case "POST":
+// 			var addBlockBody AddBlockBody
+// 			// Pointer를 보내주어야 함
+// 			err := json.NewDecoder(r.Body).Decode(&addBlockBody)
+// 			utils.HandleErr(err)
+// 			// fmt.Println(addBlockBody)
+// 			blockchain.GetBlockchain().AddBlock(addBlockBody.Message)
+// 			rw.WriteHeader(http.StatusCreated)
+// 	}
+// }
 
 func Open(aPort int) {
 	// fmt.Println(URLDescription{
