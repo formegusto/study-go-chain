@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/formegusto/study-go-chain/02.block_chain/blockchain"
+	"github.com/formegusto/study-go-chain/utils"
 	"github.com/gorilla/mux"
 )
 
@@ -67,15 +68,14 @@ func documentation(rw http.ResponseWriter, r *http.Request) {
 func blocks(rw http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 		case "GET":
-			return 
-			// json.NewEncoder(rw).Encode(blockchain.GetBlockchain().AllBlocks())
+			json.NewEncoder(rw).Encode(blockchain.Blockchain().Blocks())
+			
 		case "POST":
-			return
-			// var addBlockBody addBlockBody
-			// err := json.NewDecoder(r.Body).Decode(&addBlockBody)
-			// utils.HandleErr(err)
-			// blockchain.GetBlockchain().AddBlock(addBlockBody.Message)
-			// rw.WriteHeader(http.StatusCreated)
+			var addBlockBody addBlockBody
+			err := json.NewDecoder(r.Body).Decode(&addBlockBody)
+			utils.HandleErr(err)
+			blockchain.Blockchain().AddBlock(addBlockBody.Message)
+			rw.WriteHeader(http.StatusCreated)
 	}
 }
 

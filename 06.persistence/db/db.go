@@ -41,6 +41,10 @@ func DB() *bolt.DB{
 	return db
 }
 
+func Close() {
+	DB().Close()
+}
+
 // key : DB 에서 block 회수 -> hash
 // value : byte 형태의 data, block 전체를 byte 형태로 변환
 // boltdb byte 형태의 data만 받는다.

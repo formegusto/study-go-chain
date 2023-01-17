@@ -1,12 +1,13 @@
 package main
 
 import (
-	"github.com/formegusto/study-go-chain/02.block_chain/blockchain"
 	my_cli "github.com/formegusto/study-go-chain/05.my_cli"
+	"github.com/formegusto/study-go-chain/06.persistence/db"
 )
 
 func main() {
-	// persistence_test.Test()	
-	blockchain.Blockchain()
+	defer db.Close()
+
+	// blockchain.Blockchain()
 	my_cli.Start()
 }

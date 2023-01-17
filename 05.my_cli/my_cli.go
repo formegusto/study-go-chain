@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"runtime"
 
 	"github.com/formegusto/study-go-chain/03.explorer/explorer"
 	"github.com/formegusto/study-go-chain/04.rest_api/rest"
@@ -16,7 +17,8 @@ func usage() {
 	fmt.Printf("-mode:		Choose between 'html' and 'rest'\n\n")
 
 	// 프로그램 종료 함수
-	os.Exit(0)
+	// os.Exit(0)
+	runtime.Goexit()
 }
 
 func Start() {

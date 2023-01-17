@@ -38,6 +38,22 @@ func (b *blockchain) AddBlock(data string) {
 	b.persist()
 }
 
+func(b *blockchain) Blocks() []*Block {
+	var blocks []*Block
+	hashCursor := b.NewestHash
+	for {
+		block, _ := FindBlock(hashCursor)
+		blocks = append(blocks, block)
+		if block.PrevHash != "" {
+			hashCursor = block.PrevHash
+		} else {
+			// Genesis block 까지 탐색
+			break
+		}
+	}
+	return blocks
+}
+
 // org. GetBlockChain
 func Blockchain() *blockchain {
 	if b == nil {
