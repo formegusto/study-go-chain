@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/formegusto/study-go-chain/06.persistence/db"
 	"github.com/formegusto/study-go-chain/utils"
@@ -57,16 +58,38 @@ func FindBlock(hash string) (*Block, error) {
 	return block, nil
 }
 
+func (b *Block) mine() {
+	target := strings.Repeat("0", b.Difficulty)
+	for {
+		// struct -> string
+		strBlock := fmt.Sprint(b)
+		// string -> hash
+		hash := fmt.Sprintf("%x",sha256.Sum256([]byte(strBlock)))
+		fmt.Printf("Block as String:%s\nHash:%s\nTarget:%s\nNonce:%d\n\n\n", strBlock, hash, target, b.Nonce)
+
+		// mining valid
+		if strings.HasPrefix(hash, target) {
+			b.Hash = hash
+			break
+		} else {
+			b.Nonce++
+		}
+	}
+}
+
 func createBlock(data string, prevHash string, height int) *Block {
 	block := Block{
 		Data: data, 
 		Hash: "", 
 		PrevHash: prevHash, 
 		Height: height,
+		Difficulty: DIFFICULTY,
+		Nonce: 0,
 	}
 
-	payload := block.Data + block.PrevHash + fmt.Sprintf("%d",block.Height)
-	block.Hash = fmt.Sprintf("%x", sha256.Sum256([]byte(payload)))
+	block.mine()
+	// payload := block.Data + block.PrevHash + fmt.Sprintf("%d",block.Height)
+	// block.Hash = fmt.Sprintf("%x", sha256.Sum256([]byte(payload)))
 	block.persist()
 
 	return &block

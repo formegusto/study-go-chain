@@ -7,7 +7,7 @@ http://localhost:4000/blocks/c2009dee3d84835da1376d49df13d757f5a4eeeb4826bb1d940
 POST http://localhost:4000/blocks
 
 {
-    "message": "Data for my block (5)"
+    "message": "Mine! my block 2"
 }
 ###
 GET http://localhost:4000/blocks/3
