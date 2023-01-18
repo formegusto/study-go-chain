@@ -3,18 +3,25 @@ package main
 import (
 	"crypto/sha256"
 	"fmt"
+	"strings"
 )
 
 func main() {
-	hash := sha256.Sum256([]byte("hello"))
-	fmt.Printf("%x\n",hash)
+	difficulty := 6
+	target := strings.Repeat("0", difficulty)
+	nonce := 1
+	data := "hello"
 
-	// 1차 시도
-	hash = sha256.Sum256([]byte("hello0"))
-	fmt.Printf("%x\n",hash)
+	// 찾기
+	for {
+		bHash := sha256.Sum256([]byte(data + fmt.Sprint(nonce)))
+		hash := fmt.Sprintf("%x", bHash)
+		fmt.Printf("Hash:%s\nTarget:%s\nNonce:%d\n\n", hash, target, nonce)
 
-	// 2차 시도
-	hash = sha256.Sum256([]byte("hello1"))
-	fmt.Printf("%x\n",hash)
-
+		if strings.HasPrefix(hash, target) {
+			break
+		} else {
+			nonce++
+		}
+	}
 }
