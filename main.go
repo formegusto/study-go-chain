@@ -1,13 +1,20 @@
 package main
 
 import (
-	my_cli "github.com/formegusto/study-go-chain/05.my_cli"
-	"github.com/formegusto/study-go-chain/06.persistence/db"
+	"crypto/sha256"
+	"fmt"
 )
 
 func main() {
-	defer db.Close()
+	hash := sha256.Sum256([]byte("hello"))
+	fmt.Printf("%x\n",hash)
 
-	// blockchain.Blockchain()
-	my_cli.Start()
+	// 1차 시도
+	hash = sha256.Sum256([]byte("hello0"))
+	fmt.Printf("%x\n",hash)
+
+	// 2차 시도
+	hash = sha256.Sum256([]byte("hello1"))
+	fmt.Printf("%x\n",hash)
+
 }

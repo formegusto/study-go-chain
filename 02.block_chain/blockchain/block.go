@@ -9,11 +9,17 @@ import (
 	"github.com/formegusto/study-go-chain/utils"
 )
 
+const DIFFICULTY int = 2
+
 type Block struct {
 	Data 		string 	`json:"data"`
 	Hash 		string 	`json:"hash"`
 	PrevHash 	string 	`json:"prevHash,omitempty"`
 	Height		int		`json:"height"`
+
+	// PoW; Proof of Work
+	Difficulty 	int		`json:"difficulty"`
+	Nonce		int		`json:"nonce"`
 }
 
 // func (b *Block) toBytes() []byte {
