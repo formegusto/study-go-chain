@@ -123,3 +123,15 @@ func (m *mempool) AddTx(to string, amount int) error {
 	m.Txs = append(m.Txs, tx)
 	return nil
 }
+
+func (m *mempool) TxToConfirm() []*Tx {
+	coinbase := makeCoinbaseTx("forme")
+	txs := m.Txs
+	txs = append(txs, coinbase)
+
+	// memory pool 비우기
+	// mempool과 coinbase의 transaction들을 반환해 줬다는 의미
+	// 오로지, 블럭을 채굴했을 때만 발생하는 함수
+	m.Txs = nil
+	return txs
+}

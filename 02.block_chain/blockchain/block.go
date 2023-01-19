@@ -90,12 +90,12 @@ func createBlock(prevHash string, height int) *Block {
 		Height: height,
 		Difficulty: Blockchain().difficulty(),
 		Nonce: 0,
-		Txs: []*Tx{makeCoinbaseTx("forme")},
 	}
 
 	block.mine()
 	// payload := block.Data + block.PrevHash + fmt.Sprintf("%d",block.Height)
 	// block.Hash = fmt.Sprintf("%x", sha256.Sum256([]byte(payload)))
+	block.Txs = Mempool.TxToConfirm()
 	block.persist()
 
 	return &block
