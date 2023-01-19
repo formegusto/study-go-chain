@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/formegusto/study-go-chain/02.block_chain/blockchain"
+	"github.com/formegusto/study-go-chain/utils"
 	"github.com/gorilla/mux"
 )
 
@@ -60,6 +61,11 @@ func documentation(rw http.ResponseWriter, r *http.Request) {
 			URL: 			url("/blocks/{hash}"),
 			Method: 		"GET",
 			Description: 	"See A Block",
+		},
+		{
+			URL: 			url("/balance/{address}"),
+			Method: 		"GET",
+			Description: 	"Get TxOuts for an address",
 		},
 	}
 	json.NewEncoder(rw).Encode(data)
@@ -124,6 +130,14 @@ func status(rw http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(rw).Encode(blockchain.Blockchain())
 }
 
+func balance(rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	address := vars["address"]
+
+	err := json.NewEncoder(rw).Encode(blockchain.Blockchain().TxOutsByAddress(address))
+	utils.HandleErr(err)
+}
+
 func Start(aPort int) {
 	router := mux.NewRouter()
 
@@ -134,6 +148,7 @@ func Start(aPort int) {
 	router.HandleFunc("/status", status)
 	router.HandleFunc("/blocks", blocks).Methods("GET", "POST")
 	router.HandleFunc("/blocks/{hash:[a-f0-9]+}", block).Methods("GET")
+	router.HandleFunc("/balance/{address}", balance)
 
 	fmt.Printf("Listening on http://localhost%s\n", port)
 	log.Fatal(http.ListenAndServe(port, router))
