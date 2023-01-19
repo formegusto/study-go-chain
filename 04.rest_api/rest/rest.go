@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/formegusto/study-go-chain/02.block_chain/blockchain"
+	"github.com/formegusto/study-go-chain/utils"
 	"github.com/gorilla/mux"
 )
 
@@ -33,6 +34,11 @@ type balanceResponse struct {
 
 type errorResponse struct {
 	ErrorMessage string `json:"errorMessage"`
+}
+
+type addTxPayload struct {
+	To		string
+	Amount	int
 }
 
 func documentation(rw http.ResponseWriter, r *http.Request) {
@@ -149,6 +155,24 @@ func balance(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func mempool(rw http.ResponseWriter, r *http.Request) {
+	err := json.NewEncoder(rw).Encode(blockchain.Mempool.Txs)
+	utils.HandleErr(err)
+}
+
+func transactions(rw http.ResponseWriter, r *http.Request) {
+	var payload addTxPayload
+	err := json.NewDecoder(r.Body).Decode(&payload)
+	utils.HandleErr(err)
+
+	err = blockchain.Mempool.AddTx(payload.To, payload.Amount)
+	if err != nil {
+		json.NewEncoder(rw).Encode(errorResponse{"not enough funds"})
+	}
+	rw.WriteHeader(http.StatusCreated)
+}
+
+
 func Start(aPort int) {
 	router := mux.NewRouter()
 
@@ -160,6 +184,8 @@ func Start(aPort int) {
 	router.HandleFunc("/blocks", blocks).Methods("GET", "POST")
 	router.HandleFunc("/blocks/{hash:[a-f0-9]+}", block).Methods("GET")
 	router.HandleFunc("/balance/{address}", balance)
+	router.HandleFunc("/mempool", mempool)
+	router.HandleFunc("/transactions", transactions).Methods("POST")
 
 	fmt.Printf("Listening on http://localhost%s\n", port)
 	log.Fatal(http.ListenAndServe(port, router))
