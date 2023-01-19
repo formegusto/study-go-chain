@@ -23,7 +23,7 @@ type Block struct {
 	// Difficulty calc
 	Timestamp	int		`json:"timestamp"`
 
-	Txs 		[]*Tx	`json'tx'`
+	Txs 		[]*Tx	`json:"txs"`
 }
 
 // func (b *Block) toBytes() []byte {
@@ -90,7 +90,7 @@ func createBlock(prevHash string, height int) *Block {
 		Height: height,
 		Difficulty: Blockchain().difficulty(),
 		Nonce: 0,
-		// unix time, 1970 UTC ~ 
+		Txs: []*Tx{makeCoinbaseTx("forme")},
 	}
 
 	block.mine()
