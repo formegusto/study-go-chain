@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"github.com/formegusto/study-go-chain/02.block_chain/blockchain"
-	"github.com/formegusto/study-go-chain/utils"
 	"github.com/gorilla/mux"
 )
 
@@ -25,6 +24,11 @@ type urlDescription struct {
 	Description string `json:"description"`
 	Payload		string `json:"payload,omitempty"`
 	AdminMsg	string `json:"-"`
+}
+
+type balanceResponse struct {
+	Address		string	`json:"address"`
+	Balance		int		`json:"balance"`
 }
 
 type errorResponse struct {
@@ -134,8 +138,15 @@ func balance(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	address := vars["address"]
 
-	err := json.NewEncoder(rw).Encode(blockchain.Blockchain().TxOutsByAddress(address))
-	utils.HandleErr(err)
+	total := r.URL.Query().Get("total")
+
+	switch total {
+		case "true":
+			amount := blockchain.Blockchain().BalanceByAddress(address)
+			json.NewEncoder(rw).Encode(balanceResponse{address, amount})
+		default:
+			json.NewEncoder(rw).Encode(blockchain.Blockchain().TxOutsByAddress(address))
+	}
 }
 
 func Start(aPort int) {
