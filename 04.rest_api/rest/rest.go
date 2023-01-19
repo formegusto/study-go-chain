@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"github.com/formegusto/study-go-chain/02.block_chain/blockchain"
-	"github.com/formegusto/study-go-chain/utils"
 	"github.com/gorilla/mux"
 )
 
@@ -25,10 +24,6 @@ type urlDescription struct {
 	Description string `json:"description"`
 	Payload		string `json:"payload,omitempty"`
 	AdminMsg	string `json:"-"`
-}
-
-type addBlockBody struct {
-	Message string
 }
 
 type errorResponse struct {
@@ -76,10 +71,7 @@ func blocks(rw http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(rw).Encode(blockchain.Blockchain().Blocks())
 			
 		case "POST":
-			var addBlockBody addBlockBody
-			err := json.NewDecoder(r.Body).Decode(&addBlockBody)
-			utils.HandleErr(err)
-			blockchain.Blockchain().AddBlock(addBlockBody.Message)
+			blockchain.Blockchain().AddBlock()
 			rw.WriteHeader(http.StatusCreated)
 	}
 }

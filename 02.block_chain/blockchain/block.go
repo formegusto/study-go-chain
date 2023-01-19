@@ -12,7 +12,6 @@ import (
 
 
 type Block struct {
-	Data 		string 	`json:"data"`
 	Hash 		string 	`json:"hash"`
 	PrevHash 	string 	`json:"prevHash,omitempty"`
 	Height		int		`json:"height"`
@@ -23,6 +22,8 @@ type Block struct {
 
 	// Difficulty calc
 	Timestamp	int		`json:"timestamp"`
+
+	Txs 		[]*Tx	`json'tx'`
 }
 
 // func (b *Block) toBytes() []byte {
@@ -82,9 +83,8 @@ func (b *Block) mine() {
 	}
 }
 
-func createBlock(data string, prevHash string, height int) *Block {
+func createBlock(prevHash string, height int) *Block {
 	block := Block{
-		Data: data, 
 		Hash: "", 
 		PrevHash: prevHash, 
 		Height: height,

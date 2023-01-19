@@ -38,13 +38,13 @@ func (b* blockchain) persist() {
 	db.SaveCheckpoint(utils.ToBytes(b))
 }
 
-func (b *blockchain) AddBlock(data string) {
+func (b *blockchain) AddBlock() {
 	// prevHash와 height는
 	// 블록체인에서 알아야 한다. 
 	// 가장 최신의 블록을
 	// block := Block{data,"", b.NewestHash, b.Height + 1}
 	// 1. DB 관련 코드가 많아서 바꿈
-	block := createBlock(data, b.NewestHash, b.Height + 1)
+	block := createBlock(b.NewestHash, b.Height + 1)
 	b.NewestHash = block.Hash
 	b.Height = block.Height
 	b.CurrentDifficulty = block.Difficulty
@@ -124,7 +124,7 @@ func Blockchain() *blockchain {
 			// search for checkpoint on the db
 			checkpoint := db.Checkpoint()
 			if checkpoint == nil {
-				b.AddBlock("Genesis Block")
+				b.AddBlock()
 			} else {
 				// restore b from bytes
 				b.restore(checkpoint)
