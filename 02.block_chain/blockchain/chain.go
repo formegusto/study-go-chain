@@ -112,35 +112,41 @@ func (b *blockchain) difficulty() int {
 	}
 }
 
-func (b *blockchain) txOuts() []*TxOut {
-	var txOuts []*TxOut
-	blocks := b.Blocks()
-	// blocks search
-	for _, block := range blocks {
-		// transactions search
-		for _, tx := range block.Txs {
-			txOuts = append(txOuts, tx.TxOuts...)
-		}
-	}
+// 우리는 이제 uTxOuts만 가지고 오면 된다. 아직 사용되지 않은 transaction out!
+// func (b *blockchain) txOuts() []*TxOut {
+// 	var txOuts []*TxOut
+// 	blocks := b.Blocks()
+// 	// blocks search
+// 	for _, block := range blocks {
+// 		// transactions search
+// 		for _, tx := range block.Txs {
+// 			txOuts = append(txOuts, tx.TxOuts...)
+// 		}
+// 	}
 
-	return txOuts
+// 	return txOuts
+// }
+// func (b *blockchain) TxOutsByAddress(address string) []*TxOut {
+// 	var ownedTxOuts []*TxOut
+// 	txOuts := b.txOuts()
+
+// 	for _, txOut := range txOuts {
+// 		if txOut.Owner == address {
+// 			ownedTxOuts = append(ownedTxOuts, txOut)
+// 		}
+// 	}
+// 	return ownedTxOuts
+// }
+
+// 아직 input에서 사용되지 않은 output을 넘겨줄 것 이다.
+func (b *blockchain) UTxOutsByAddress(address string) []*TxOut {
+	// input은 이제 output을 찾기 위한 표지판 역할이다.
+	// 1. TxID를 찾아서,,
 }
 
-
-func (b *blockchain) TxOutsByAddress(address string) []*TxOut {
-	var ownedTxOuts []*TxOut
-	txOuts := b.txOuts()
-
-	for _, txOut := range txOuts {
-		if txOut.Owner == address {
-			ownedTxOuts = append(ownedTxOuts, txOut)
-		}
-	}
-	return ownedTxOuts
-}
 
 func (b* blockchain) BalanceByAddress(address string) int {
-	txOuts := b.TxOutsByAddress(address)
+	txOuts := b.UTxOutsByAddress(address)
 	var amount int
 	for _, txOut := range txOuts {
 		amount += txOut.Amount

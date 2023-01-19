@@ -1,7 +1,6 @@
 package blockchain
 
 import (
-	"errors"
 	"time"
 
 	"github.com/formegusto/study-go-chain/utils"
@@ -33,8 +32,11 @@ func (tx *Tx) getId() {
 }
 
 type TxIn struct {
-	Owner 	string
-	Amount 	int
+	TxID	string	`json:"txID"`// 이전 Tx를 찾는 방법
+	Index	int		`json:"index"`// TxId의 Tx어디에 연결된 TxOut이 위치해 있는가
+	Owner 	string	`json:"owner"`
+	// 특정 Output으로 부터 받아올 것 이기 때문에 필요 없다.
+	// Amount 	int
 }
 
 type TxOut struct {
@@ -42,12 +44,19 @@ type TxOut struct {
 	Amount 	int
 }
 
+// unspent transaction output
+type UTxOut struct {
+	TxID	string	`json:"txID"`
+	Index	int		`json:"index"`
+	Owner 	string	`json:"owner"`
+}
+
 // address is miner address
 func makeCoinbaseTx(address string) *Tx {
 	// owner : 소유주
 	// amount : 채굴자에게 지급할 액수의 수량
 	txIns := []*TxIn {
-		{"COINBASE", minerReward},
+		{"", -1 , "COINBASE"},
 	}
 	// owner : 채굴자의 주소
 	// amount : 거래 총량
@@ -64,53 +73,59 @@ func makeCoinbaseTx(address string) *Tx {
 	return &tx
 }
 
+// // v1
+// func makeTx(from, to string, amount int) (*Tx, error) {
+// 	// 누군가가 얼마만큼 가지고 있는지 알고 싶다면 출력값을 참고해야 한다.
+// 	// transaction을 시작하고 싶다면 입력값을 만들면 된다.
+// 	// 그리고 입력값은 blockchain 가지고 있는 나의 돈 이다.
+
+// 	// 이 말은 blockchain이 아니라, 인간이 만드는 transaction을 발생시키고 싶다면,
+// 	// 인간이 트랜잭션의 출력값을 가지고 있어야 하고, 이 출력값을 트랜잭션 입력값으로 다시 변경해주어야 한다는 것을 말한다.
+// 	// transaction input은 예전의 transaction output 이다.
+// 	if Blockchain().BalanceByAddress(from) < amount {
+// 		return nil, errors.New("Not Enough money")
+// 	}
+
+// 	// 여러개의 TxOut 중에서 사용자가 주어야 하는 TxOut 만큼만 사용하면 된다.
+// 	// 목표는 크거나 같을 때 까지,
+// 	var txIns []*TxIn
+// 	var txOuts []*TxOut
+// 	total := 0
+// 	oldTxOuts := Blockchain().TxOutsByAddress(from)
+// 	for _, txOut := range oldTxOuts {
+// 		if total > amount {
+// 			break
+// 		}
+// 		txIn := &TxIn{txOut.Owner, txOut.Amount}
+// 		txIns = append(txIns, txIn)
+// 		total += txIn.Amount
+// 	}
+
+// 	// 잔돈이 있을 수 있기 때문에
+// 	change := total - amount
+// 	// 잔돈용 Tx 생성
+// 	if change != 0 {
+// 		changeTxOut := &TxOut{from, change}
+// 		txOuts = append(txOuts, changeTxOut)
+// 	}
+// 	// amount transaction output
+// 	txOut := &TxOut{to, amount}
+// 	txOuts = append(txOuts, txOut)
+
+// 	tx := &Tx{
+// 		Id:"",
+// 		Timestamp: int(time.Now().Unix()),
+// 		TxIns: txIns,
+// 		TxOuts: txOuts,
+// 	}
+// 	tx.getId()
+
+// 	return tx, nil
+// }
+
+// v2
 func makeTx(from, to string, amount int) (*Tx, error) {
-	// 누군가가 얼마만큼 가지고 있는지 알고 싶다면 출력값을 참고해야 한다.
-	// transaction을 시작하고 싶다면 입력값을 만들면 된다.
-	// 그리고 입력값은 blockchain 가지고 있는 나의 돈 이다.
 
-	// 이 말은 blockchain이 아니라, 인간이 만드는 transaction을 발생시키고 싶다면,
-	// 인간이 트랜잭션의 출력값을 가지고 있어야 하고, 이 출력값을 트랜잭션 입력값으로 다시 변경해주어야 한다는 것을 말한다.
-	// transaction input은 예전의 transaction output 이다.
-	if Blockchain().BalanceByAddress(from) < amount {
-		return nil, errors.New("Not Enough money")
-	}
-
-	// 여러개의 TxOut 중에서 사용자가 주어야 하는 TxOut 만큼만 사용하면 된다.
-	// 목표는 크거나 같을 때 까지,
-	var txIns []*TxIn
-	var txOuts []*TxOut
-	total := 0
-	oldTxOuts := Blockchain().TxOutsByAddress(from)
-	for _, txOut := range oldTxOuts {
-		if total > amount {
-			break
-		}
-		txIn := &TxIn{txOut.Owner, txOut.Amount}
-		txIns = append(txIns, txIn)
-		total += txIn.Amount
-	}
-
-	// 잔돈이 있을 수 있기 때문에
-	change := total - amount
-	// 잔돈용 Tx 생성
-	if change != 0 {
-		changeTxOut := &TxOut{from, change}
-		txOuts = append(txOuts, changeTxOut)
-	}
-	// amount transaction output
-	txOut := &TxOut{to, amount}
-	txOuts = append(txOuts, txOut)
-
-	tx := &Tx{
-		Id:"",
-		Timestamp: int(time.Now().Unix()),
-		TxIns: txIns,
-		TxOuts: txOuts,
-	}
-	tx.getId()
-
-	return tx, nil
 }
 
 // 여기서 보내는 사람(from)은 필요하지 않다.
