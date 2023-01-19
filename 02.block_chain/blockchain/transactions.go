@@ -48,7 +48,7 @@ type TxOut struct {
 type UTxOut struct {
 	TxID	string	`json:"txID"`
 	Index	int		`json:"index"`
-	Owner 	string	`json:"owner"`
+	Amount	int		`json:"amount"`
 }
 
 // address is miner address

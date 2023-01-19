@@ -139,9 +139,36 @@ func (b *blockchain) difficulty() int {
 // }
 
 // 아직 input에서 사용되지 않은 output을 넘겨줄 것 이다.
-func (b *blockchain) UTxOutsByAddress(address string) []*TxOut {
+func (b *blockchain) UTxOutsByAddress(address string) []*UTxOut {
 	// input은 이제 output을 찾기 위한 표지판 역할이다.
 	// 1. TxID를 찾아서,,
+	var uTxOuts []*UTxOut
+	// spend transaction outputs
+	creatorTxs := make(map[string]bool)
+
+	for _, block := range b.Blocks() {
+		for _, tx := range block.Txs {
+			// 모든 input은 어떠한 output으로 부터 나왔다.
+			for _, input := range tx.TxIns {
+				if input.Owner == address {
+					// 사용하는 output을 찾아낼 수 있다.
+					// map 처럼 저장해야 한다.
+					creatorTxs[input.TxID] = true
+				}
+			}
+			
+			// 여기서 확인함
+			for index, output := range tx.TxOuts {
+				if output.Owner == address {
+					if _, ok := creatorTxs[tx.Id]; !ok {
+						uTxOuts = append(uTxOuts, &UTxOut{tx.Id, index, output.Amount})
+					}
+				}	
+			}
+		}
+	}
+
+	return uTxOuts
 }
 
 
