@@ -10,7 +10,6 @@ import (
 	"github.com/formegusto/study-go-chain/utils"
 )
 
-
 type Block struct {
 	Hash 		string 	`json:"hash"`
 	PrevHash 	string 	`json:"prevHash,omitempty"`

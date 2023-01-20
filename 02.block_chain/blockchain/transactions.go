@@ -23,6 +23,7 @@ type Tx struct {
 	TxIns 		[]*TxIn		`json:"txIns"`
 	TxOuts 		[]*TxOut	`json:"txOuts"`
 }
+
 func (tx *Tx) getId() {
 	tx.Id = utils.Hash(tx)
 }
@@ -47,9 +48,13 @@ type UTxOut struct {
 func isOnMempool(uTxOut *UTxOut) bool {
 	exists := false
 
+	Outer:
 	for _, tx := range Mempool.Txs {
 		for _, input := range tx.TxIns {
-			exists = input.TxID == uTxOut.TxID && input.Index == uTxOut.Index 
+			if input.TxID == uTxOut.TxID && input.Index == uTxOut.Index  {
+				exists = true
+				break Outer
+			}
 		}
 	}
 
@@ -104,7 +109,6 @@ func makeTx(from, to string, amount int) (*Tx, error) {
 	}
 	tx.getId()
 	return tx, nil
-
 }
 
 func (m *mempool) AddTx(to string, amount int) error {
