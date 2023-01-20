@@ -33,7 +33,7 @@ func persistBlockchain(b* blockchain)  {
 }
 
 func (b *blockchain) AddBlock() {
-	block := createBlock(b.NewestHash, b.Height + 1)
+	block := createBlock(b.NewestHash, b.Height + 1, getDifficulty(b))
 	b.NewestHash = block.Hash
 	b.Height = block.Height
 	b.CurrentDifficulty = block.Difficulty
@@ -72,7 +72,7 @@ func recalculateDifficulty(b *blockchain)  int {
 	return b.CurrentDifficulty
 }
 
-func difficulty(b *blockchain) int {
+func getDifficulty(b *blockchain) int {
 	if b.Height == 0 {
 		return defaultDifficulty
 	} else if b.Height % difficultyInterval == 0 {
@@ -120,21 +120,19 @@ func BalanceByAddress(address string, b* blockchain) int {
 }
 
 func Blockchain() *blockchain {
-	if b == nil {
-		once.Do(func() {
-			b = &blockchain{
-				Height: 0,
-			}
-			fmt.Printf("NewestHash: %s\nHeight: %d\n\n", b.NewestHash, b.Height)
+	once.Do(func() {
+		b = &blockchain{
+			Height: 0,
+		}
+		fmt.Printf("NewestHash: %s\nHeight: %d\n\n", b.NewestHash, b.Height)
 
-			checkpoint := db.Checkpoint()
-			if checkpoint == nil {
-				b.AddBlock()
-			} else {
-				b.restore(checkpoint)
-			}
-		})
-	}
+		checkpoint := db.Checkpoint()
+		if checkpoint == nil {
+			b.AddBlock()
+		} else {
+			b.restore(checkpoint)
+		}
+	})
 
 	fmt.Printf("NewestHash: %s\nHeight: %d\n", b.NewestHash, b.Height)
 	return b
