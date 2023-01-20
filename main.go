@@ -1,11 +1,11 @@
 package main
 
 import (
-	my_cli "github.com/formegusto/study-go-chain/05.my_cli"
-	"github.com/formegusto/study-go-chain/06.persistence/db"
+	wallet_test "github.com/formegusto/study-go-chain/07.wallet"
 )
 
 func main() {
-	defer db.Close()
-	my_cli.Start()
+	// defer db.Close()
+	// my_cli.Start()
+	wallet_test.Test()
 }
