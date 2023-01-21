@@ -10,6 +10,10 @@ import (
 	"github.com/formegusto/study-go-chain/utils"
 )
 
+const (
+	hashedMessage string = "c33084feaa65adbbbebd0c9bf292a26ffc6dea97b170d88e501ab4865591aafd"
+)
+
 func Start() {
 	privateKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	utils.HandleErr(err)
@@ -19,6 +23,7 @@ func Start() {
 
 	// 2. hash message
 	hashedMessage := utils.Hash(message)
+	fmt.Println(hashedMessage)
 
 	// 3. sign hash
 	hashAsBytes, err := hex.DecodeString(hashedMessage)
@@ -27,6 +32,9 @@ func Start() {
 
 	// 4. what?
 	utils.HandleErr(err)
-	fmt.Printf("R:%d\nS:%d\n", r,s)
+	// fmt.Printf("R:%d\nS:%d\n", r,s)
 
+	// 5. verify
+	ok := ecdsa.Verify(&privateKey.PublicKey, hashAsBytes, r, s)
+	fmt.Println(ok)
 }
