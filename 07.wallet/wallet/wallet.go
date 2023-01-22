@@ -5,6 +5,7 @@ import (
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/x509"
+	"encoding/hex"
 	"fmt"
 	"os"
 
@@ -55,6 +56,21 @@ func aFromK(key *ecdsa.PrivateKey) string {
 	z := append(x, y...)
 
 	return fmt.Sprintf("%x", z)
+}
+
+func sign(payload string, w *wallet) string {
+	payloadAsBytes, err := hex.DecodeString(payload)
+	utils.HandleErr(err)
+
+	r, s, err := ecdsa.Sign(rand.Reader, w.privateKey, payloadAsBytes)
+	utils.HandleErr(err)
+
+	signature := append(r.Bytes(), s.Bytes()...)
+	return fmt.Sprintf("%x", signature)
+}
+
+func verify(signature, payload, publicKey string) bool {
+	return true
 }
 
 func Wallet() *wallet {
