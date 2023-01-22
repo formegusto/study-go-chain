@@ -51,23 +51,28 @@ func restoreKey() (privateKey *ecdsa.PrivateKey) {
 	return
 }
 
-func aFromK(key *ecdsa.PrivateKey) string {
-	x := key.X.Bytes()
-	y := key.Y.Bytes()
-	z := append(x, y...)
-
-	return fmt.Sprintf("%x", z)
+func encodeBigInts(a, b *big.Int) string {
+	bytes := append(a.Bytes(), b.Bytes()...)
+	return fmt.Sprintf("%x", bytes)
 }
 
-func sign(payload string, w *wallet) string {
+func aFromK(key *ecdsa.PrivateKey) string {
+	x := key.X
+	y := key.Y
+	z := encodeBigInts(x, y)
+
+	return z
+}
+
+func sign(payload string, w wallet) string {
 	payloadAsBytes, err := hex.DecodeString(payload)
 	utils.HandleErr(err)
 
 	r, s, err := ecdsa.Sign(rand.Reader, w.privateKey, payloadAsBytes)
 	utils.HandleErr(err)
 
-	signature := append(r.Bytes(), s.Bytes()...)
-	return fmt.Sprintf("%x", signature)
+	signature := encodeBigInts(r, s)
+	return signature
 }
 
 func restoreBigInt(payload string) (*big.Int, *big.Int, error) {
@@ -93,11 +98,12 @@ func verify(signature, payload, address string) bool {
 	x, y, err := restoreBigInt(address)
 	utils.HandleErr(err)
 	publicKey := ecdsa.PublicKey {
-		Curve: elliptic.P256(),
-		X: x,
-		Y: y,
+		Curve: 	elliptic.P256(),
+		X: 		x,
+		Y: 		y,
 	}
 
+	// 3. Verify!
 	payloadAsBytes, err := hex.DecodeString(payload)
 	utils.HandleErr(err)
 	ok := ecdsa.Verify(&publicKey, payloadAsBytes, r, s)
