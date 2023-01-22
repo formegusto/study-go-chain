@@ -10,9 +10,9 @@ POST http://localhost:4000/blocks
 ###
 GET http://localhost:4000/blocks/3
 ###
-GET http://localhost:4000/balance/forme
+GET http://localhost:4000/balance/b6a274ca59d9ce581c636d253590b0bdc0ee86c4367e7e6e2c4c9a1631d8525cece0b5cb5ac206a774974381a08c6a92de709314bf24b5bf41ba3db9e4044dc4
 ###
-GET http://localhost:4000/balance/forme?total=true
+GET http://localhost:4000/balance/b6a274ca59d9ce581c636d253590b0bdc0ee86c4367e7e6e2c4c9a1631d8525cece0b5cb5ac206a774974381a08c6a92de709314bf24b5bf41ba3db9e4044dc4?total=true
 ###
 POST http://localhost:4000/transactions
 
@@ -22,3 +22,5 @@ POST http://localhost:4000/transactions
 }
 ###
 http://localhost:4000/mempool
+####
+http://localhost:4000/wallet
