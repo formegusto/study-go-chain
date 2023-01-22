@@ -5,6 +5,7 @@ import (
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/x509"
+	"fmt"
 	"os"
 
 	"github.com/formegusto/study-go-chain/utils"
@@ -15,7 +16,8 @@ const (
 )
 
 type wallet struct {
-	privateKey *ecdsa.PrivateKey
+	privateKey 	*ecdsa.PrivateKey
+	address		string
 }
 
 var w *wallet
@@ -39,6 +41,23 @@ func persistKey(key *ecdsa.PrivateKey) {
 	utils.HandleErr(err)
 }
 
+func restoreKey() (privateKey *ecdsa.PrivateKey) {
+	keyAsBytes, err := os.ReadFile(filename)
+	utils.HandleErr(err)
+	privateKey, err = x509.ParseECPrivateKey(keyAsBytes)
+	utils.HandleErr(err)
+	return
+}
+
+func aFromK(key *ecdsa.PrivateKey) string {
+	x := key.X.Bytes()
+	y := key.Y.Bytes()
+
+	fmt.Println(len(x), len(y))
+
+	return ""
+}
+
 func Wallet() *wallet {
 	if w == nil {
 		w = &wallet{}
@@ -47,12 +66,14 @@ func Wallet() *wallet {
 		isHas := hasWalletFile()
 		if isHas {
 			// 2-a. yes -> restore from file
+			w.privateKey = restoreKey()
 		} else {
 			// 2-b. no -> create prv key, save to file
 			key := createPrvKey()
 			persistKey(key)
 			w.privateKey = key
 		}
+		w.address = aFromK(w.privateKey)
 	}
 
 	return w
