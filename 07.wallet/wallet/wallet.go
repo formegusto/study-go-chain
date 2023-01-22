@@ -7,6 +7,7 @@ import (
 	"crypto/x509"
 	"encoding/hex"
 	"fmt"
+	"math/big"
 	"os"
 
 	"github.com/formegusto/study-go-chain/utils"
@@ -69,8 +70,39 @@ func sign(payload string, w *wallet) string {
 	return fmt.Sprintf("%x", signature)
 }
 
-func verify(signature, payload, publicKey string) bool {
-	return true
+func restoreBigInt(payload string) (*big.Int, *big.Int, error) {
+	bytes, err := hex.DecodeString(payload)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	firstHalfBytes, secondHalfBytes := bytes[:len(bytes) / 2], bytes[len(bytes) / 2:]
+	bigR, bigS := &big.Int{}, &big.Int{}
+	bigR.SetBytes(firstHalfBytes)
+	bigS.SetBytes(secondHalfBytes)
+
+	return bigR, bigS, nil
+}
+
+func verify(signature, payload, address string) bool {
+	// 1. restore signature
+	r, s, err := restoreBigInt(signature)
+	utils.HandleErr(err)
+
+	// 2. restore publicKey
+	x, y, err := restoreBigInt(address)
+	utils.HandleErr(err)
+	publicKey := ecdsa.PublicKey {
+		Curve: elliptic.P256(),
+		X: x,
+		Y: y,
+	}
+
+	payloadAsBytes, err := hex.DecodeString(payload)
+	utils.HandleErr(err)
+	ok := ecdsa.Verify(&publicKey, payloadAsBytes, r, s)
+
+	return ok
 }
 
 func Wallet() *wallet {
