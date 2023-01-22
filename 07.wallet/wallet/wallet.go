@@ -16,14 +16,19 @@ const (
 	privateKey string = "3077020101042045ca6857700ace5906b3bea921d69992ceff772485aed28537953750060c5b25a00a06082a8648ce3d030107a14403420004a2c6839013e9b09f4e68f7765531feba60d11ed384d119f36594173976d9fd33d802da0de74ad5ea91b5e614bac048721a0db4039b5590fab78243d619b2241d"
 	hashedMessage string = "c33084feaa65adbbbebd0c9bf292a26ffc6dea97b170d88e501ab4865591aafd"
 	signature string = "d61fdba987524bb6b345028bf456e9dabebd7ebf889f885d6f78ff36e751b9ce47ad557e186ae01232e8cca0218c4c845e7c572fbcfa1e43c1f265a1ddde1c3d"
+	badMessage string = "d33084feaa65adbbbebd0c9bf292a26ffc6dea97b170d88e501ab4865591aafd"
 )
 
 func Start() {
+
+}
+
+func RestoreProcess() {
 	// 1. privateKey -> privateBytes
 	privBytes, err := hex.DecodeString(privateKey)
 	utils.HandleErr(err)
 
-	restoredKey, err = x509.ParseECPrivateKey(privBytes)
+	restoredKey, err := x509.ParseECPrivateKey(privBytes)
 	utils.HandleErr(err)
 
 	// 2. signature slice
@@ -37,6 +42,18 @@ func Start() {
 	bigR.SetBytes(rBytes)
 	bigS.SetBytes(sBytes)
 	fmt.Println(bigR, bigS)
+
+	// 4. Verify process check
+	hashAsBytes, err := hex.DecodeString(hashedMessage)
+	utils.HandleErr(err)
+	ok := ecdsa.Verify(&restoredKey.PublicKey, hashAsBytes, &bigR, &bigS)
+	fmt.Println(ok)
+
+	// bad bmessage 
+	badAsBytes, err := hex.DecodeString(badMessage)
+	utils.HandleErr(err)
+	ok = ecdsa.Verify(&restoredKey.PublicKey, badAsBytes, &bigR, &bigS)
+	fmt.Println(ok)
 }
 
 func BasicProcess() {
