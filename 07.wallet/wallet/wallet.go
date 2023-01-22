@@ -17,7 +17,7 @@ const (
 
 type wallet struct {
 	privateKey 	*ecdsa.PrivateKey
-	address		string
+	Address		string
 }
 
 var w *wallet
@@ -52,10 +52,9 @@ func restoreKey() (privateKey *ecdsa.PrivateKey) {
 func aFromK(key *ecdsa.PrivateKey) string {
 	x := key.X.Bytes()
 	y := key.Y.Bytes()
+	z := append(x, y...)
 
-	fmt.Println(len(x), len(y))
-
-	return ""
+	return fmt.Sprintf("%x", z)
 }
 
 func Wallet() *wallet {
@@ -73,7 +72,7 @@ func Wallet() *wallet {
 			persistKey(key)
 			w.privateKey = key
 		}
-		w.address = aFromK(w.privateKey)
+		w.Address = aFromK(w.privateKey)
 	}
 
 	return w
