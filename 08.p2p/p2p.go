@@ -9,14 +9,25 @@ import (
 go routine basic
 */
 func BasicTest() {
-	go CountToTen("one")
-	go CountToTen("two")
-	for {}
+	c := make(chan int)
+	go CountToTen(c)
+
+	fmt.Println("Blocking")
+	for {
+		a := <-c
+		fmt.Printf("received %d\n", a)
+	}
+
+	// go CountToTen("two")
+	// *. channel 없이 기다리는 방법
+	// for {}
 }
 
-func CountToTen(name string) {
+func CountToTen(c chan int) {
 	for i := range [10]int{} {
-		fmt.Println(name,i)
 		time.Sleep(1 * time.Second)
+		fmt.Printf("sending %d\n", i)
+		c <- i
+		// fmt.Println(i)
 	}
 }
