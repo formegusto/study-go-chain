@@ -8,6 +8,7 @@ import (
 
 	"github.com/formegusto/study-go-chain/02.block_chain/blockchain"
 	"github.com/formegusto/study-go-chain/07.wallet/wallet"
+	"github.com/formegusto/study-go-chain/08.p2p/p2p"
 	"github.com/formegusto/study-go-chain/utils"
 	"github.com/gorilla/mux"
 )
@@ -82,6 +83,11 @@ func documentation(rw http.ResponseWriter, r *http.Request) {
 			Method: 		"GET",
 			Description: 	"Get TxOuts for an address",
 		},
+		{
+			URL: 			url("/ws"),
+			Method: 		"GET",
+			Description: 	"Upgrade to WebSockets",
+		},
 	}
 	json.NewEncoder(rw).Encode(data)
 }
@@ -116,6 +122,13 @@ func block(rw http.ResponseWriter, r *http.Request) {
 func jsonContentTypeMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func (rw http.ResponseWriter, r *http.Request) {
 		rw.Header().Add("Content-Type", "application/json")
+		next.ServeHTTP(rw, r)
+	})
+}
+
+func loggerMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func (rw http.ResponseWriter, r *http.Request) {
+		fmt.Println(r.URL)
 		next.ServeHTTP(rw, r)
 	})
 }
@@ -173,7 +186,7 @@ func Start(aPort int) {
 
 	port = fmt.Sprintf(":%d", aPort)
 
-	router.Use(jsonContentTypeMiddleware)
+	router.Use(jsonContentTypeMiddleware, loggerMiddleware)
 	router.HandleFunc("/", documentation).Methods("GET")
 	router.HandleFunc("/status", status)
 	router.HandleFunc("/blocks", blocks).Methods("GET", "POST")
@@ -182,6 +195,7 @@ func Start(aPort int) {
 	router.HandleFunc("/mempool", mempool).Methods("GET")
 	router.HandleFunc("/wallet", myWallet).Methods("GET")
 	router.HandleFunc("/transactions", transactions).Methods("POST")
+	router.HandleFunc("/ws", p2p.Upgrade).Methods("GET")
 
 	fmt.Printf("Listening on http://localhost%s\n", port)
 	log.Fatal(http.ListenAndServe(port, router))

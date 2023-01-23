@@ -1,10 +1,13 @@
 package main
 
-import p2p_test "github.com/formegusto/study-go-chain/08.p2p"
+import (
+	my_cli "github.com/formegusto/study-go-chain/05.my_cli"
+	"github.com/formegusto/study-go-chain/06.persistence/db"
+)
 
 func main() {
-	// defer db.Close()
-	// my_cli.Start()
+	defer db.Close()
+	my_cli.Start()
 	// wallet_test.Test()
-	p2p_test.BasicTest()
+	// p2p_test.BasicTest()
 }
