@@ -18,7 +18,7 @@
       const socket = new WebSocket("ws://localhost:4000/ws");
       socket.addEventListener("close", () => console.log("closed"));
       socket.addEventListener("message", (e) => {
-        span.innerHTML = span.innerHTML + `\n${e.data}`;
+        span.innerHTML = span.innerHTML + ` - ${e.data}<br/>`;
       });
       form.addEventListener("submit", (e) => {
         e.preventDefault();
