@@ -9,6 +9,20 @@
   <body>
     <script>
       const socket = new WebSocket("ws://localhost:4000/ws");
+
+      socket.addEventListener("close", () => {
+        console.log("connection closed.");
+      });
+
+      setTimeout(() => {
+        socket.send("hello darling! js > go");
+      }, 5000);
+      setTimeout(() => {
+        socket.send("hello again! js > go");
+      }, 10000);
+      setTimeout(() => {
+        socket.send("hello !!!!!!!");
+      }, 15000);
     </script>
   </body>
 </html>
