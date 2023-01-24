@@ -1,7 +1,6 @@
 package blockchain
 
 import (
-	"fmt"
 	"sync"
 
 	"github.com/formegusto/study-go-chain/06.persistence/db"
@@ -144,7 +143,7 @@ func Blockchain() *blockchain {
 		b = &blockchain{
 			Height: 0,
 		}
-		fmt.Printf("NewestHash: %s\nHeight: %d\n\n", b.NewestHash, b.Height)
+		// fmt.Printf("NewestHash: %s\nHeight: %d\n\n", b.NewestHash, b.Height)
 
 		checkpoint := db.Checkpoint()
 		if checkpoint == nil {
@@ -154,6 +153,6 @@ func Blockchain() *blockchain {
 		}
 	})
 
-	fmt.Printf("NewestHash: %s\nHeight: %d\n", b.NewestHash, b.Height)
+	// fmt.Printf("NewestHash: %s\nHeight: %d\n", b.NewestHash, b.Height)
 	return b
 }

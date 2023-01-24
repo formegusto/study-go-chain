@@ -2,12 +2,15 @@
 package db
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/formegusto/study-go-chain/utils"
 	bolt "go.etcd.io/bbolt"
 )
 
 const (
-	dbName = "blockchain.db"
+	dbName = "blockchain"
 	dataBucket = "data"
 	blocksBucket = "blocks"
 
@@ -15,13 +18,18 @@ const (
 )
 var db *bolt.DB
 
+func getDBName() string{
+	port := os.Args[2][6:]
+	return fmt.Sprintf("%s_%s.db", dbName, port)
+}
+
 // db initialize
 func DB() *bolt.DB{
 	if db == nil {
 		// init db 
 		// path는 database 이름이고, 파일이 없으면 자동으로 생성해준다.
 		// 1. path, 2. permision, 3. options
-		dbPointer, err := bolt.Open(dbName, 0600, nil)
+		dbPointer, err := bolt.Open(getDBName(), 0600, nil)
 		utils.HandleErr(err)
 		db = dbPointer
 
