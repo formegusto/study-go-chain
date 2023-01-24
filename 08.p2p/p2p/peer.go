@@ -28,6 +28,7 @@ type peer struct {
 func AllPeers(p *peers) []string {
 	p.m.Lock()
 	defer p.m.Unlock()
+
 	var peers []string
 
 	for key := range p.v {
@@ -71,6 +72,8 @@ func (p *peer) write() {
 }
 
 func initPeer(conn *websocket.Conn, address ,port string) *peer{
+	Peers.m.Lock()
+	defer Peers.m.Unlock()
 	key := fmt.Sprintf("%s:%s", address, port)
 	p := &peer{
 		key:		key,
