@@ -2,6 +2,7 @@ package blockchain
 
 import (
 	"errors"
+	"sync"
 	"time"
 
 	"github.com/formegusto/study-go-chain/07.wallet/wallet"
@@ -14,9 +15,22 @@ const (
 
 type mempool struct {
 	Txs []*Tx 
+	m	sync.Mutex
 }
 
-var Mempool *mempool = &mempool{}
+var m *mempool = &mempool{}
+var memOnce sync.Once
+
+func Mempool() *mempool {
+	m.m.Lock()
+	defer m.m.Unlock()
+
+	memOnce.Do(func() {
+		m = &mempool{}
+	})
+
+	return m
+}
 
 type Tx struct {
 	Id 			string		`json:"id"`
@@ -76,7 +90,7 @@ func isOnMempool(uTxOut *UTxOut) bool {
 	exists := false
 
 	Outer:
-	for _, tx := range Mempool.Txs {
+	for _, tx := range Mempool().Txs {
 		for _, input := range tx.TxIns {
 			if input.TxID == uTxOut.TxID && input.Index == uTxOut.Index  {
 				exists = true
@@ -146,13 +160,13 @@ func makeTx(from, to string, amount int) (*Tx, error) {
 	return tx, nil
 }
 
-func (m *mempool) AddTx(to string, amount int) error {
+func (m *mempool) AddTx(to string, amount int) (*Tx, error) {
 	tx, err := makeTx(wallet.Wallet().Address,to, amount)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	m.Txs = append(m.Txs, tx)
-	return nil
+	return tx, nil
 }
 
 func (m *mempool) TxToConfirm() []*Tx {
@@ -161,4 +175,11 @@ func (m *mempool) TxToConfirm() []*Tx {
 	txs = append(txs, coinbase)
 	m.Txs = nil
 	return txs
+}
+
+func (m *mempool) AddPeerTx(tx *Tx) {
+	m.m.Lock()
+	defer m.m.Unlock()
+
+	m.Txs = append(m.Txs, tx)
 }
