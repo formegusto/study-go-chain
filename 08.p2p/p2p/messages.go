@@ -2,6 +2,7 @@ package p2p
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/formegusto/study-go-chain/02.block_chain/blockchain"
 	"github.com/formegusto/study-go-chain/utils"
@@ -20,23 +21,13 @@ type Message struct {
 	Payload		[]byte
 }
 
-func (m *Message) addPayload(p interface{}) {
-	b, err := json.Marshal(p)
-	utils.HandleErr(err)
-
-	m.Payload = b
-}
-
 func makeMessage(kind MessageKind, payload interface{}) []byte {
 	m := Message{
 		Kind: kind,
+		Payload: utils.ToJSON(payload),
 	}
-	m.addPayload(payload)
 
-	mJson, err := json.Marshal(m)
-	utils.HandleErr(err)
-	
-	return mJson
+	return utils.ToJSON(m)
 }
 
 func sendNewestBlock(p *peer) {
@@ -47,4 +38,16 @@ func sendNewestBlock(p *peer) {
 	// 변환해서 보내기
 	m := makeMessage(MessageNewestBlock, b)
 	p.inbox <- m
+}
+
+func handleMessage(m *Message, p *peer) {
+	// fmt.Printf("Peer: %s, Sent a message with kind of: %d\n", p.key, m.Kind)
+	switch m.Kind {
+		case MessageNewestBlock:
+			var payload blockchain.Block
+			err := json.Unmarshal(m.Payload, &payload)
+			utils.HandleErr(err)
+			fmt.Println(payload)
+
+	}
 }
