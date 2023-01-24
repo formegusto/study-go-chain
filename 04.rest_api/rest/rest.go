@@ -103,7 +103,8 @@ func blocks(rw http.ResponseWriter, r *http.Request) {
 			utils.HandleErr(err)
 			
 		case "POST":
-			blockchain.Blockchain().AddBlock()
+			newBlock := blockchain.Blockchain().AddBlock()
+			p2p.BroadcastNewBlock(newBlock)
 			rw.WriteHeader(http.StatusCreated)
 	}
 }
