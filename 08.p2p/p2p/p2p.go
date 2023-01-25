@@ -35,7 +35,7 @@ func AddPeer(address, port, openPort string, broadcast bool) {
 	if broadcast {
 		broadcastNewPeer(p)
 		// 요청할 필요없음.
-		return
+		// return
 	}
 	sendNewestBlock(p)
 }
