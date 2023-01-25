@@ -26,12 +26,17 @@ func Upgrade(rw http.ResponseWriter, r *http.Request) {
 	initPeer(conn, address, openPort)
 }
 
-func AddPeer(address, port, openPort string) {
+func AddPeer(address, port, openPort string, broadcast bool) {
 	// port :4000 is requesting an upgrade from the port :3000
 	fmt.Printf("%s wants to connect to port %s\n", openPort, port)
-	conn, _, err := websocket.DefaultDialer.Dial(fmt.Sprintf("ws://%s:%s/ws?openPort=%s", address, port, openPort[1:]), nil)
+	conn, _, err := websocket.DefaultDialer.Dial(fmt.Sprintf("ws://%s:%s/ws?openPort=%s", address, port, openPort), nil)
 	utils.HandleErr(err)
 	p := initPeer(conn, address, port)
+	if broadcast {
+		broadcastNewPeer(p)
+		// 요청할 필요없음.
+		return
+	}
 	sendNewestBlock(p)
 }
 
@@ -44,5 +49,18 @@ func BroadcastNewBlock(b *blockchain.Block) {
 func BroadcastNewTx(tx *blockchain.Tx) {
 	for _, p := range Peers.v {
 		notifyNewTx(tx, p)
+	}
+}
+
+func broadcastNewPeer(newPeer *peer) {
+	// 새로운 피어를 제외하고 보내준다는 것에 집중
+	for key, p := range Peers.v {
+		if key != newPeer.key {
+			// 보면 받는 이의 open port를 보내고 있는 것을 확인할 수 있다.
+			// 이는 시스템 상에서 자신의 port 정보를 확인할 수 없기 때문
+			// 이를 받은 이는 openPort를 새로운 피어에게 알려줘야 하기 때문
+			payload := fmt.Sprintf("%s:%s", newPeer.key, p.port)
+			notifyNewPeer(payload, p)
+		}
 	}
 }

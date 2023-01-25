@@ -3,6 +3,7 @@ package p2p
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/formegusto/study-go-chain/02.block_chain/blockchain"
 	"github.com/formegusto/study-go-chain/utils"
@@ -16,6 +17,7 @@ const (
 	MessageAllBlocksResponse
 	MessageNewBlockNotify
 	MessageNewTxNotify
+	MessageNewPeerNotify
 )
 
 type Message struct {
@@ -63,6 +65,11 @@ func notifyNewTx(tx *blockchain.Tx, p *peer) {
 	p.inbox <- m
 }
 
+func notifyNewPeer(payload interface {}, p *peer) {
+	m := makeMessage(MessageNewPeerNotify, payload)
+	p.inbox <- m
+}
+
 func handleMessage(m *Message, p *peer) {
 	// fmt.Printf("Peer: %s, Sent a message with kind of: %d\n", p.key, m.Kind)
 	switch m.Kind {
@@ -105,5 +112,14 @@ func handleMessage(m *Message, p *peer) {
 			utils.HandleErr(err)
 
 			blockchain.Mempool().AddPeerTx(payload)
+		case MessageNewPeerNotify:
+			var payload string 
+			err := json.Unmarshal(m.Payload, &payload)
+
+			utils.HandleErr(err)
+			fmt.Printf("I will now /ws upgrade %s\n", payload)
+			parts := strings.Split(payload, ":")
+			// address, port, openPort := strings.Split(payload)
+			AddPeer(parts[0], parts[1], parts[2], false)
 	}
 }
