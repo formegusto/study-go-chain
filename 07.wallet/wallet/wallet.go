@@ -26,7 +26,7 @@ var w *wallet
 
 func hasWalletFile() bool {
 	_, err := os.Stat(filename)
-	return os.IsExist(err)
+	return !os.IsNotExist(err)
 }
 
 func createPrvKey() *ecdsa.PrivateKey {
