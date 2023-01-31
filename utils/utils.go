@@ -1,3 +1,4 @@
+// utils contains function to be used across the application.
 package utils
 
 import (
@@ -10,9 +11,11 @@ import (
 	"strings"
 )
 
+var logFn = log.Panic
+
 func HandleErr(err error)  {
 	if err != nil {
-		log.Panic(err)
+		logFn(err)
 	}
 }
 
@@ -24,12 +27,14 @@ func ToBytes(i interface{}) []byte {
 	return buffer.Bytes()
 }
 
+// FromBytes takses an interface and data and then will encode the data to the interface
 func FromBytes(i interface{}, data []byte) {
 	decoder := gob.NewDecoder(bytes.NewReader(data))
 	err := decoder.Decode(i)
 	HandleErr(err)	
 }
 
+// Hash takes an interface, hashes it and returns the hex encoding of the hash.
 func Hash(i interface{}) string {
 	s := fmt.Sprintf("%v", i)
 	hash := sha256.Sum256([]byte(s))

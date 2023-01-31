@@ -21,5 +21,6 @@
 go.work
 
 *.db
+*.out
 
 wallets

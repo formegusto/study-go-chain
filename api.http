@@ -22,20 +22,20 @@ POST http://localhost:2000/blocks
 ###
 GET http://localhost:4000/blocks/3
 ###
-GET http://localhost:6000/balance/a604764fff2173e4e54ce7766ffacd82d3d837d984aed1755601ad4fe77c5779bb057864fbfe49c83a6b7b8a0f68232fcaa8f142860b0fff85645845c3b85027
+GET http://localhost:2000/balance/a604764fff2173e4e54ce7766ffacd82d3d837d984aed1755601ad4fe77c5779bb057864fbfe49c83a6b7b8a0f68232fcaa8f142860b0fff85645845c3b85027
 ###
-GET http://localhost:4000/balance/a604764fff2173e4e54ce7766ffacd82d3d837d984aed1755601ad4fe77c5779bb057864fbfe49c83a6b7b8a0f68232fcaa8f142860b0fff85645845c3b85027
+GET http://localhost:2000/balance/a604764fff2173e4e54ce7766ffacd82d3d837d984aed1755601ad4fe77c5779bb057864fbfe49c83a6b7b8a0f68232fcaa8f142860b0fff85645845c3b85027
 ###
 GET http://localhost:2000/balance/a604764fff2173e4e54ce7766ffacd82d3d837d984aed1755601ad4fe77c5779bb057864fbfe49c83a6b7b8a0f68232fcaa8f142860b0fff85645845c3b85027?total=true
 ###
-POST http://localhost:4000/transactions
+POST http://localhost:2000/transactions
 
 {
     "to": "gusto",
-    "amount": 10
+    "amount": 100
 }
 ###
-http://localhost:3000/mempool
+http://localhost:2000/mempool
 ####
 http://localhost:2000/wallet
 ####
